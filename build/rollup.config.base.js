@@ -10,7 +10,7 @@ export default {
   input: 'src/index.js',
   plugins: [
     postcss({
-      extract: 'dist/table.css',
+      extract: 'dist/vue-table.css',
       plugins: [autoprefixer()],
       sourceMap: true,
       minimize: true
