@@ -55,11 +55,12 @@ export default {
           <div class='cell'>
             <label class='check-box'>
               <input
+                class='check-box-input'
                 disabled={ this.$parent.selectable ? this.$parent.selectable.call(this, trData, index) : false }
                 checked={ trData.checked }
                 onClick={ this.check.bind(this, trData, index) }
                 type='checkbox'/>
-              <span class='indicator'></span>
+              <span class={ (trData.checked ? 'is-checked' : '') + ' indicator' }></span>
             </label>
           </div>
         </td>

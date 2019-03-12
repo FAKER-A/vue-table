@@ -23,8 +23,6 @@ export default {
       }
     }
   },
-  watch: {
-  },
   methods: {
     select() {
       this.$emit('allSelection')
@@ -40,12 +38,12 @@ export default {
           <div class='cell'>
             <label class='check-box'>
               <input
+                class='check-box-input'
                 checked={ this.allSelection }
                 onClick={ this.select }
                 type='checkbox' />
-              <span class='indicator'></span>
+              <span class={ (this.allSelection ? 'is-checked' : '') + ' indicator' }></span>
             </label>
-
           </div>
         </th>
       )

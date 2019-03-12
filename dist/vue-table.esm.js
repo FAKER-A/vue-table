@@ -32,7 +32,6 @@ var script = {
       }
     }
   },
-  watch: {},
   methods: {
     select: function select() {
       this.$emit('allSelection');
@@ -55,6 +54,7 @@ var script = {
             'label',
             { 'class': 'check-box' },
             [h('input', {
+              'class': 'check-box-input',
               domProps: {
                 'checked': this.allSelection
               },
@@ -63,7 +63,7 @@ var script = {
               },
               attrs: {
                 type: 'checkbox' }
-            }), h('span', { 'class': 'indicator' })]
+            }), h('span', { 'class': (this.allSelection ? 'is-checked' : '') + ' indicator' })]
           )]
         )]
       );
@@ -283,7 +283,7 @@ var __vue_script__ = script;
 /* style */
 var __vue_inject_styles__ = function __vue_inject_styles__(inject) {
   if (!inject) { return; }
-  inject("data-v-4547f900_0", { source: "\n/*# sourceMappingURL=tableHeader.vue.map */", map: { "version": 3, "sources": ["tableHeader.vue"], "names": [], "mappings": ";AACA,0CAA0C", "file": "tableHeader.vue" }, media: undefined });
+  inject("data-v-b1b3a97e_0", { source: "\n/*# sourceMappingURL=tableHeader.vue.map */", map: { "version": 3, "sources": ["tableHeader.vue"], "names": [], "mappings": ";AACA,0CAA0C", "file": "tableHeader.vue" }, media: undefined });
 };
 /* scoped */
 var __vue_scope_id__ = undefined;
@@ -368,8 +368,8 @@ var script$1 = {
             'label',
             { 'class': 'check-box' },
             [h('input', {
-              attrs: {
-                disabled: this.$parent.selectable ? this.$parent.selectable.call(this, trData, index) : false,
+              'class': 'check-box-input',
+              attrs: { disabled: this.$parent.selectable ? this.$parent.selectable.call(this, trData, index) : false,
 
                 type: 'checkbox' },
               domProps: {
@@ -378,7 +378,7 @@ var script$1 = {
               on: {
                 'click': this.check.bind(this, trData, index)
               }
-            }), h('span', { 'class': 'indicator' })]
+            }), h('span', { 'class': (trData.checked ? 'is-checked' : '') + ' indicator' })]
           )]
         )]
       );

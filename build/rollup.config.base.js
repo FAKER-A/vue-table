@@ -11,9 +11,9 @@ export default {
   plugins: [
     postcss({
       extract: 'dist/vue-table.css',
-      plugins: [autoprefixer()],
-      sourceMap: true,
-      minimize: true
+      plugins: [autoprefixer()]
+      // sourceMap: true,
+      // minimize: true
     }),
     vue(),
     babel({
