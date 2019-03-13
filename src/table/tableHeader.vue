@@ -21,8 +21,19 @@ export default {
         if (!canCheckData.length) return false
         return canCheckData.every(item => !!item.checked)
       }
+    },
+    maxDeep() {
+      const deep = 0
+      return deep
     }
   },
+  mounted() {
+    const oldColumn = this.$parent.columns.map(item => {
+      return item.context
+    })
+    console.log(this.getAllColumns(oldColumn))
+  },
+
   methods: {
     select() {
       this.$emit('allSelection')
@@ -47,8 +58,19 @@ export default {
           </div>
         </th>
       )
+    },
+    getAllColumns(columns) {
+      const result = []
+      columns.forEach((column) => {
+        if (column.$children) {
+          result.push(column)
+          result.push.apply(result, this.getAllColumns(column.$children))
+        } else {
+          result.push(column)
+        }
+      })
+      return result
     }
-    // renderDefault
   },
   render() {
     return (
@@ -107,4 +129,3 @@ export default {
 <style lang="scss">
 
 </style>
-

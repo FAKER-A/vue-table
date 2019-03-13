@@ -11,11 +11,29 @@
       <v-table-column
         prop="name"
         label="姓名"
-      />
+      >
+        <v-table-column
+          prop="age"
+          label="测试年龄2"
+        />
+        <v-table-column
+          prop="sex"
+          label="性别2"
+        >
+          <v-table-column
+            prop="work"
+            label="工作3"
+          />
+        </v-table-column>
+      </v-table-column>
       <v-table-column
         prop="age"
         label="年龄"
-      />
+      >
+        <template slot-scope="{ row }">
+          {{ row.age + 5 }}
+        </template>
+      </v-table-column>
       <v-table-column
         prop="sex"
         label="性别"
@@ -35,6 +53,7 @@ export default {
     return {
       tablelist: [
         { name: 'lisheng', age: 25, sex: '男', work: '前端工程师' },
+        { name: 'wangchen', age: 30, sex: '女', work: '后端工程师' },
         { name: 'wangchen', age: 30, sex: '女', work: '后端工程师' }
       ]
     }

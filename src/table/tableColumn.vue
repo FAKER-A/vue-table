@@ -1,6 +1,7 @@
 
 <script>
 export default {
+  name: 'TableColumn',
   props: {
     label: {
       type: String,
@@ -48,16 +49,16 @@ export default {
     }
   },
   created() {
-  },
-  mounted() {
+    this.$options.render = h => h('div', this.$slots.default)
     this.columnConfig = {
       ...this.$props,
+      context: this,
       render: this.$scopedSlots.default
     }
-    this.$parent.$emit('insertColumn', this.columnConfig)
   },
-  render() {
-    return null
+  mounted() {
+    this.$parent.$emit('insertColumn', this.columnConfig)
   }
+
 }
 </script>

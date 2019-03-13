@@ -30,8 +30,20 @@ var script = {
           return !!item.checked;
         });
       }
+    },
+    maxDeep: function maxDeep() {
+      var deep = 0;
+      return deep;
     }
   },
+  mounted: function mounted() {
+    var oldColumn = this.$parent.columns.map(function (item) {
+      return item.context;
+    });
+    console.log(this.getAllColumns(oldColumn));
+  },
+
+
   methods: {
     select: function select() {
       this.$emit('allSelection');
@@ -67,12 +79,24 @@ var script = {
           )]
         )]
       );
-    }
-    // renderDefault
+    },
+    getAllColumns: function getAllColumns(columns) {
+      var _this2 = this;
 
+      var result = [];
+      columns.forEach(function (column) {
+        if (column.$children) {
+          result.push(column);
+          result.push.apply(result, _this2.getAllColumns(column.$children));
+        } else {
+          result.push(column);
+        }
+      });
+      return result;
+    }
   },
   render: function render() {
-    var _this2 = this;
+    var _this3 = this;
 
     var h = arguments[0];
 
@@ -95,19 +119,19 @@ var script = {
           var html = void 0;
           switch (column.type) {
             case 'selection':
-              html = _this2.renderSelectionTh(column, index);
+              html = _this3.renderSelectionTh(column, index);
               break;
             case '':
               html = h(
                 'th',
-                { key: index + column.prop, 'class': _this2.border ? 'is-' + (column.headerAlign ? column.headerAlign : column.align) : 'no-border is-' + (column.headerAlign ? column.headerAlign : column.align) },
+                { key: index + column.prop, 'class': _this3.border ? 'is-' + (column.headerAlign ? column.headerAlign : column.align) : 'no-border is-' + (column.headerAlign ? column.headerAlign : column.align) },
                 [column.sort ? h(
                   'div',
                   { 'class': 'cell' },
                   [h(
                     'span',
                     { 'class': 'sortable', on: {
-                        'click': _this2.sort.bind(_this2, column.prop, null)
+                        'click': _this3.sort.bind(_this3, column.prop, null)
                       }
                     },
                     [column.label]
@@ -117,12 +141,12 @@ var script = {
                     [h('i', {
                       'class': column.sortDireaction === 'A' ? 'active arrow arrow-up' : 'arrow arrow-up',
                       on: {
-                        'click': _this2.sort.bind(_this2, column.prop, 'A')
+                        'click': _this3.sort.bind(_this3, column.prop, 'A')
                       }
                     }), h('i', {
                       'class': column.sortDireaction === 'D' ? 'active arrow arrow-down' : 'arrow arrow-down',
                       on: {
-                        'click': _this2.sort.bind(_this2, column.prop, 'D')
+                        'click': _this3.sort.bind(_this3, column.prop, 'D')
                       }
                     })]
                   )]
@@ -283,7 +307,7 @@ var __vue_script__ = script;
 /* style */
 var __vue_inject_styles__ = function __vue_inject_styles__(inject) {
   if (!inject) { return; }
-  inject("data-v-b1b3a97e_0", { source: "\n/*# sourceMappingURL=tableHeader.vue.map */", map: { "version": 3, "sources": ["tableHeader.vue"], "names": [], "mappings": ";AACA,0CAA0C", "file": "tableHeader.vue" }, media: undefined });
+  inject("data-v-4605da5c_0", { source: "\n/*# sourceMappingURL=tableHeader.vue.map */", map: { "version": 3, "sources": ["tableHeader.vue"], "names": [], "mappings": ";AACA,0CAA0C", "file": "tableHeader.vue" }, media: undefined });
 };
 /* scoped */
 var __vue_scope_id__ = undefined;
@@ -758,6 +782,7 @@ var VueTable = normalizeComponent_1({ render: __vue_render__, staticRenderFns: _
 //
 
 var script$3 = {
+  name: 'TableColumn',
   props: {
     label: {
       type: String,
@@ -803,15 +828,19 @@ var script$3 = {
   data: function data() {
     return {};
   },
-  created: function created() {},
-  mounted: function mounted() {
+  created: function created() {
+    var _this = this;
+
+    this.$options.render = function (h) {
+      return h('div', _this.$slots.default);
+    };
     this.columnConfig = _extends({}, this.$props, {
+      context: this,
       render: this.$scopedSlots.default
     });
-    this.$parent.$emit('insertColumn', this.columnConfig);
   },
-  render: function render() {
-    return null;
+  mounted: function mounted() {
+    this.$parent.$emit('insertColumn', this.columnConfig);
   }
 };
 
