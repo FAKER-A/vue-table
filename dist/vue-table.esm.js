@@ -75,59 +75,11 @@ var script = {
         )]
       );
     }
-    // getAllColumns(level = 0, columns) {
-    //   const result = []
-    //   level++
-    //   columns.forEach((column, index) => {
-    //     column.pos = {
-    //       col: index + 1,
-    //       row: level
-    //     }
-    //     if (column.$children) {
-    //       result.push(column)
-    //       result.push.apply(result, this.getAllColumns(level, column.$children))
-    //     } else {
-    //       result.push(column)
-    //     }
-    //   })
-    //   return result
-    // }
-
   },
   render: function render() {
     var _this2 = this;
 
     var h = arguments[0];
-
-    // const oldColumn = this.$parent.columns.map(item => {
-    //   return item.context
-    // })
-
-    // const newColumn = this.getAllColumns(0, oldColumn).map(item => {
-    //   return { pos: item.pos, ...item.columnConfig }
-    // })
-
-    // const maxRows = newColumn.reduce((prev, now) => {
-    //   prev = now.pos.row > prev ? now.pos.row : prev
-    //   return prev
-    // }, 1)
-
-    // const rows = []
-
-    // for (let i = 1; i <= 3; i++) {
-    //   rows.push([])
-    // }
-
-    // newColumn.forEach((column) => {
-    //   if (!column.context.$children.length) {
-    //     column.rowSpan = maxRows - column.pos.row + 1
-    //     column.colSpan = 1
-    //   } else {
-    //     column.rowSpan = 1
-    //     column.colSpan = column.context.$children.length
-    //   }
-    //   rows[column.pos.row - 1].push(column)
-    // })
 
     return h(
       'div',
@@ -343,7 +295,7 @@ var __vue_script__ = script;
 /* style */
 var __vue_inject_styles__ = function __vue_inject_styles__(inject) {
   if (!inject) { return; }
-  inject("data-v-1c0f3f87_0", { source: "\n/*# sourceMappingURL=tableHeader.vue.map */", map: { "version": 3, "sources": ["tableHeader.vue"], "names": [], "mappings": ";AACA,0CAA0C", "file": "tableHeader.vue" }, media: undefined });
+  inject("data-v-0b6847e0_0", { source: "\n/*# sourceMappingURL=tableHeader.vue.map */", map: { "version": 3, "sources": ["tableHeader.vue"], "names": [], "mappings": ";AACA,0CAA0C", "file": "tableHeader.vue" }, media: undefined });
 };
 /* scoped */
 var __vue_scope_id__ = undefined;
@@ -700,37 +652,7 @@ var script$2 = {
   created: function created() {
     this.$on('insertColumn', this.insertColumn);
   },
-  mounted: function mounted() {
-    // const oldColumn = this.$parent.columns.map(item => {
-    //   return item.context
-    // })
-
-    // const newColumn = this.getAllColumns(0, oldColumn).map(item => {
-    //   return { pos: item.pos, ...item.columnConfig }
-    // })
-
-    // const maxRows = newColumn.reduce((prev, now) => {
-    //   prev = now.pos.row > prev ? now.pos.row : prev
-    //   return prev
-    // }, 1)
-
-    // const rows = []
-
-    // for (let i = 1; i <= 3; i++) {
-    //   rows.push([])
-    // }
-
-    // newColumn.forEach((column) => {
-    //   if (!column.context.$children.length) {
-    //     column.rowSpan = maxRows - column.pos.row + 1
-    //     column.colSpan = 1
-    //   } else {
-    //     column.rowSpan = 1
-    //     column.colSpan = column.context.$children.length
-    //   }
-    //   rows[column.pos.row - 1].push(column)
-    // })
-  },
+  mounted: function mounted() {},
 
   methods: {
     insertColumn: function insertColumn(config) {

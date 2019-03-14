@@ -54,55 +54,8 @@ export default {
         </th>
       )
     }
-    // getAllColumns(level = 0, columns) {
-    //   const result = []
-    //   level++
-    //   columns.forEach((column, index) => {
-    //     column.pos = {
-    //       col: index + 1,
-    //       row: level
-    //     }
-    //     if (column.$children) {
-    //       result.push(column)
-    //       result.push.apply(result, this.getAllColumns(level, column.$children))
-    //     } else {
-    //       result.push(column)
-    //     }
-    //   })
-    //   return result
-    // }
   },
   render() {
-    // const oldColumn = this.$parent.columns.map(item => {
-    //   return item.context
-    // })
-
-    // const newColumn = this.getAllColumns(0, oldColumn).map(item => {
-    //   return { pos: item.pos, ...item.columnConfig }
-    // })
-
-    // const maxRows = newColumn.reduce((prev, now) => {
-    //   prev = now.pos.row > prev ? now.pos.row : prev
-    //   return prev
-    // }, 1)
-
-    // const rows = []
-
-    // for (let i = 1; i <= 3; i++) {
-    //   rows.push([])
-    // }
-
-    // newColumn.forEach((column) => {
-    //   if (!column.context.$children.length) {
-    //     column.rowSpan = maxRows - column.pos.row + 1
-    //     column.colSpan = 1
-    //   } else {
-    //     column.rowSpan = 1
-    //     column.colSpan = column.context.$children.length
-    //   }
-    //   rows[column.pos.row - 1].push(column)
-    // })
-
     return (
       <div class='qb-table-header-wrapper'>
         <table

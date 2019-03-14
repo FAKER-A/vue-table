@@ -137,35 +137,6 @@ export default {
     this.$on('insertColumn', this.insertColumn)
   },
   mounted() {
-    // const oldColumn = this.$parent.columns.map(item => {
-    //   return item.context
-    // })
-
-    // const newColumn = this.getAllColumns(0, oldColumn).map(item => {
-    //   return { pos: item.pos, ...item.columnConfig }
-    // })
-
-    // const maxRows = newColumn.reduce((prev, now) => {
-    //   prev = now.pos.row > prev ? now.pos.row : prev
-    //   return prev
-    // }, 1)
-
-    // const rows = []
-
-    // for (let i = 1; i <= 3; i++) {
-    //   rows.push([])
-    // }
-
-    // newColumn.forEach((column) => {
-    //   if (!column.context.$children.length) {
-    //     column.rowSpan = maxRows - column.pos.row + 1
-    //     column.colSpan = 1
-    //   } else {
-    //     column.rowSpan = 1
-    //     column.colSpan = column.context.$children.length
-    //   }
-    //   rows[column.pos.row - 1].push(column)
-    // })
   },
   methods: {
     insertColumn(config) {
