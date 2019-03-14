@@ -6,14 +6,14 @@
   >
     <slot />
     <table-header
-      :columns="columns"
+      :columns="realColumns"
       :data="tableData"
       :border="border"
       @allSelection="allSelectionCallback"
       @sort="sortCallback"
     />
     <table-body
-      :columns="columns"
+      :columns="realColumns"
       :data="tableData"
       :border="border"
       :row-class-name="rowClassName"
@@ -79,10 +79,44 @@ export default {
         delete item.checked
         return item
       })
+    },
+    allColumns() {
+      const oldColumnComponents = this.columns.map(item => item.context)
+      return this.getAllColumns(0, oldColumnComponents).map(item => {
+        return { pos: item.pos, ...item.columnConfig }
+      })
+    },
+    maxRows() {
+      return this.allColumns.reduce((prev, now) => {
+        prev = now.pos.row > prev ? now.pos.row : prev
+        return prev
+      }, 1)
+    },
+    headerRows() {
+      const rows = []
+
+      for (let i = 1; i <= 3; i++) {
+        rows.push([])
+      }
+
+      this.allColumns.forEach((column) => {
+        if (!column.context.$children.length) {
+          column.rowSpan = this.maxRows - column.pos.row + 1
+          column.colSpan = 1
+        } else {
+          column.rowSpan = 1
+          column.colSpan = column.context.$children.length
+        }
+        rows[column.pos.row - 1].push(column)
+      })
+      return rows
+    },
+    realColumns() {
+      return this.allColumns.filter(item => !item.context.$children.length)
     }
   },
   watch: {
-    columns(v) {
+    realColumns(v) {
       if (v.length === this.$slots.default.filter(item => !!item.tag).length) {
         this.setColWidth()
       }
@@ -102,6 +136,37 @@ export default {
   created() {
     this.$on('insertColumn', this.insertColumn)
   },
+  mounted() {
+    // const oldColumn = this.$parent.columns.map(item => {
+    //   return item.context
+    // })
+
+    // const newColumn = this.getAllColumns(0, oldColumn).map(item => {
+    //   return { pos: item.pos, ...item.columnConfig }
+    // })
+
+    // const maxRows = newColumn.reduce((prev, now) => {
+    //   prev = now.pos.row > prev ? now.pos.row : prev
+    //   return prev
+    // }, 1)
+
+    // const rows = []
+
+    // for (let i = 1; i <= 3; i++) {
+    //   rows.push([])
+    // }
+
+    // newColumn.forEach((column) => {
+    //   if (!column.context.$children.length) {
+    //     column.rowSpan = maxRows - column.pos.row + 1
+    //     column.colSpan = 1
+    //   } else {
+    //     column.rowSpan = 1
+    //     column.colSpan = column.context.$children.length
+    //   }
+    //   rows[column.pos.row - 1].push(column)
+    // })
+  },
   methods: {
     insertColumn(config) {
       config.colID = this.colID
@@ -110,9 +175,9 @@ export default {
       this.columns.push(config)
     },
     setColWidth() {
-      const columnLength = this.columns.length
+      const columnLength = this.realColumns.length
       const tableWidth = this.$el.clientWidth
-      const setedWidthCol = this.columns.filter(item => item.width)
+      const setedWidthCol = this.realColumns.filter(item => item.width)
       const setedWidthNum = setedWidthCol.length
       const setedTotalWidth = setedWidthCol.reduce((prev, curr) => {
         if (curr.width) {
@@ -121,7 +186,7 @@ export default {
         return prev
       }, 0)
       const avgWidth = (tableWidth - setedTotalWidth) / (columnLength - setedWidthNum)
-      this.columns.forEach(column => {
+      this.realColumns.forEach(column => {
         if (!column.width) {
           column.width = `${Math.ceil(avgWidth)}`
         }
@@ -149,8 +214,8 @@ export default {
       return val
     },
     sortCallback({ prop, direaction }) {
-      const index = this.columns.findIndex(item => item.prop === prop)
-      const oldDireaction = this.columns[index].sortDireaction
+      const index = this.allColumns.findIndex(item => item.prop === prop)
+      const oldDireaction = this.allColumns[index].sortDireaction
       const defaultSortFn = (a, b) => {
         const p1 = this.getObjectValue(a, prop)
         const p2 = this.getObjectValue(b, prop)
@@ -170,7 +235,7 @@ export default {
       }
       let nowDireaction
       function _reset() {
-        this.columns.forEach(item => {
+        this.allColumns.forEach(item => {
           if (item.prop !== prop) {
             item.sortDireaction = null
           }
@@ -186,7 +251,24 @@ export default {
 
       this.tableData.sort(defaultSortFn)
       _reset.call(this)
-      this.columns[index].sortDireaction = nowDireaction
+      this.allColumns[index].sortDireaction = nowDireaction
+    },
+    getAllColumns(level = 0, columns) {
+      const result = []
+      level++
+      columns.forEach((column, index) => {
+        column.pos = {
+          col: index + 1,
+          row: level
+        }
+        if (column.$children) {
+          result.push(column)
+          result.push.apply(result, this.getAllColumns(level, column.$children))
+        } else {
+          result.push(column)
+        }
+      })
+      return result
     }
   }
 }

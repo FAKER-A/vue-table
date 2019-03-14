@@ -7,28 +7,34 @@
       <v-table-column
         type="selection"
         width="38"
+        sort
       />
       <v-table-column
         prop="name"
         label="姓名"
+        sort
       >
-        <v-table-column
-          prop="age"
-          label="测试年龄2"
-        />
         <v-table-column
           prop="sex"
           label="性别2"
+          sort
         >
           <v-table-column
             prop="work"
             label="工作3"
+            sort
           />
         </v-table-column>
+        <v-table-column
+          prop="age"
+          label="测试年龄2"
+          sort
+        />
       </v-table-column>
       <v-table-column
         prop="age"
         label="年龄"
+        sort
       >
         <template slot-scope="{ row }">
           {{ row.age + 5 }}
@@ -37,10 +43,12 @@
       <v-table-column
         prop="sex"
         label="性别"
+        sort
       />
       <v-table-column
         prop="work"
         label="工作"
+        sort
       />
     </v-table>
   </div>

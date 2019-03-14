@@ -36,14 +36,6 @@ var script = {
       return deep;
     }
   },
-  mounted: function mounted() {
-    var oldColumn = this.$parent.columns.map(function (item) {
-      return item.context;
-    });
-    console.log(this.getAllColumns(oldColumn));
-  },
-
-
   methods: {
     select: function select() {
       this.$emit('allSelection');
@@ -58,6 +50,9 @@ var script = {
         'th',
         {
           key: index + column.prop,
+          attrs: { rowSpan: column.rowSpan,
+            colSpan: column.colSpan
+          },
           'class': this.border ? '' : 'no-border' },
         [h(
           'div',
@@ -79,26 +74,60 @@ var script = {
           )]
         )]
       );
-    },
-    getAllColumns: function getAllColumns(columns) {
-      var _this2 = this;
-
-      var result = [];
-      columns.forEach(function (column) {
-        if (column.$children) {
-          result.push(column);
-          result.push.apply(result, _this2.getAllColumns(column.$children));
-        } else {
-          result.push(column);
-        }
-      });
-      return result;
     }
+    // getAllColumns(level = 0, columns) {
+    //   const result = []
+    //   level++
+    //   columns.forEach((column, index) => {
+    //     column.pos = {
+    //       col: index + 1,
+    //       row: level
+    //     }
+    //     if (column.$children) {
+    //       result.push(column)
+    //       result.push.apply(result, this.getAllColumns(level, column.$children))
+    //     } else {
+    //       result.push(column)
+    //     }
+    //   })
+    //   return result
+    // }
+
   },
   render: function render() {
-    var _this3 = this;
+    var _this2 = this;
 
     var h = arguments[0];
+
+    // const oldColumn = this.$parent.columns.map(item => {
+    //   return item.context
+    // })
+
+    // const newColumn = this.getAllColumns(0, oldColumn).map(item => {
+    //   return { pos: item.pos, ...item.columnConfig }
+    // })
+
+    // const maxRows = newColumn.reduce((prev, now) => {
+    //   prev = now.pos.row > prev ? now.pos.row : prev
+    //   return prev
+    // }, 1)
+
+    // const rows = []
+
+    // for (let i = 1; i <= 3; i++) {
+    //   rows.push([])
+    // }
+
+    // newColumn.forEach((column) => {
+    //   if (!column.context.$children.length) {
+    //     column.rowSpan = maxRows - column.pos.row + 1
+    //     column.colSpan = 1
+    //   } else {
+    //     column.rowSpan = 1
+    //     column.colSpan = column.context.$children.length
+    //   }
+    //   rows[column.pos.row - 1].push(column)
+    // })
 
     return h(
       'div',
@@ -115,50 +144,57 @@ var script = {
           return h('col', {
             attrs: { width: column.width }
           });
-        })]), h('thead', [h('tr', [this.columns.map(function (column, index) {
-          var html = void 0;
-          switch (column.type) {
-            case 'selection':
-              html = _this3.renderSelectionTh(column, index);
-              break;
-            case '':
-              html = h(
-                'th',
-                { key: index + column.prop, 'class': _this3.border ? 'is-' + (column.headerAlign ? column.headerAlign : column.align) : 'no-border is-' + (column.headerAlign ? column.headerAlign : column.align) },
-                [column.sort ? h(
-                  'div',
-                  { 'class': 'cell' },
-                  [h(
-                    'span',
-                    { 'class': 'sortable', on: {
-                        'click': _this3.sort.bind(_this3, column.prop, null)
-                      }
+        })]), h('thead', [this.$parent.headerRows.map(function (columns, index) {
+          return h('tr', [columns.map(function (column, index) {
+            var html = void 0;
+            switch (column.type) {
+              case 'selection':
+                html = _this2.renderSelectionTh(column, index);
+                break;
+              case '':
+                html = h(
+                  'th',
+                  {
+                    key: index + column.prop,
+                    attrs: { rowSpan: column.rowSpan,
+                      colSpan: column.colSpan
                     },
-                    [column.label]
-                  ), h(
-                    'span',
-                    { 'class': 'arrow-group' },
-                    [h('i', {
-                      'class': column.sortDireaction === 'A' ? 'active arrow arrow-up' : 'arrow arrow-up',
-                      on: {
-                        'click': _this3.sort.bind(_this3, column.prop, 'A')
-                      }
-                    }), h('i', {
-                      'class': column.sortDireaction === 'D' ? 'active arrow arrow-down' : 'arrow arrow-down',
-                      on: {
-                        'click': _this3.sort.bind(_this3, column.prop, 'D')
-                      }
-                    })]
+                    'class': _this2.border ? 'is-' + (column.headerAlign ? column.headerAlign : column.align) : 'no-border is-' + (column.headerAlign ? column.headerAlign : column.align) },
+                  [column.sort ? h(
+                    'div',
+                    { 'class': 'cell' },
+                    [h(
+                      'span',
+                      { 'class': 'sortable', on: {
+                          'click': _this2.sort.bind(_this2, column.prop, null)
+                        }
+                      },
+                      [column.label]
+                    ), h(
+                      'span',
+                      { 'class': 'arrow-group' },
+                      [h('i', {
+                        'class': column.sortDireaction === 'A' ? 'active arrow arrow-up' : 'arrow arrow-up',
+                        on: {
+                          'click': _this2.sort.bind(_this2, column.prop, 'A')
+                        }
+                      }), h('i', {
+                        'class': column.sortDireaction === 'D' ? 'active arrow arrow-down' : 'arrow arrow-down',
+                        on: {
+                          'click': _this2.sort.bind(_this2, column.prop, 'D')
+                        }
+                      })]
+                    )]
+                  ) : h(
+                    'div',
+                    { 'class': 'cell' },
+                    [h('span', [column.label])]
                   )]
-                ) : h(
-                  'div',
-                  { 'class': 'cell' },
-                  [h('span', [column.label])]
-                )]
-              );
-          }
-          return html;
-        })])])]
+                );
+            }
+            return html;
+          })]);
+        })])]
       )]
     );
   }
@@ -307,7 +343,7 @@ var __vue_script__ = script;
 /* style */
 var __vue_inject_styles__ = function __vue_inject_styles__(inject) {
   if (!inject) { return; }
-  inject("data-v-4605da5c_0", { source: "\n/*# sourceMappingURL=tableHeader.vue.map */", map: { "version": 3, "sources": ["tableHeader.vue"], "names": [], "mappings": ";AACA,0CAA0C", "file": "tableHeader.vue" }, media: undefined });
+  inject("data-v-1c0f3f87_0", { source: "\n/*# sourceMappingURL=tableHeader.vue.map */", map: { "version": 3, "sources": ["tableHeader.vue"], "names": [], "mappings": ";AACA,0CAA0C", "file": "tableHeader.vue" }, media: undefined });
 };
 /* scoped */
 var __vue_scope_id__ = undefined;
@@ -596,10 +632,50 @@ var script$2 = {
         delete item.checked;
         return item;
       });
+    },
+    allColumns: function allColumns() {
+      var oldColumnComponents = this.columns.map(function (item) {
+        return item.context;
+      });
+      return this.getAllColumns(0, oldColumnComponents).map(function (item) {
+        return _extends({ pos: item.pos }, item.columnConfig);
+      });
+    },
+    maxRows: function maxRows() {
+      return this.allColumns.reduce(function (prev, now) {
+        prev = now.pos.row > prev ? now.pos.row : prev;
+        return prev;
+      }, 1);
+    },
+    headerRows: function headerRows() {
+      var _this = this;
+
+      var rows = [];
+
+      for (var i = 1; i <= 3; i++) {
+        rows.push([]);
+      }
+
+      this.allColumns.forEach(function (column) {
+        if (!column.context.$children.length) {
+          column.rowSpan = _this.maxRows - column.pos.row + 1;
+          column.colSpan = 1;
+        } else {
+          column.rowSpan = 1;
+          column.colSpan = column.context.$children.length;
+        }
+        rows[column.pos.row - 1].push(column);
+      });
+      return rows;
+    },
+    realColumns: function realColumns() {
+      return this.allColumns.filter(function (item) {
+        return !item.context.$children.length;
+      });
     }
   },
   watch: {
-    columns: function columns(v) {
+    realColumns: function realColumns(v) {
       if (v.length === this.$slots.default.filter(function (item) {
         return !!item.tag;
       }).length) {
@@ -609,13 +685,13 @@ var script$2 = {
 
     data: {
       handler: function handler(v) {
-        var _this = this;
+        var _this2 = this;
 
         this.tableData = JSON.parse(JSON.stringify(v.map(function (item) {
           return _extends({}, item, { checked: false });
         })));
         this.$nextTick(function () {
-          _this.$emit('selectChange', _this.selected);
+          _this2.$emit('selectChange', _this2.selected);
         });
       },
       immediate: true
@@ -623,6 +699,37 @@ var script$2 = {
   },
   created: function created() {
     this.$on('insertColumn', this.insertColumn);
+  },
+  mounted: function mounted() {
+    // const oldColumn = this.$parent.columns.map(item => {
+    //   return item.context
+    // })
+
+    // const newColumn = this.getAllColumns(0, oldColumn).map(item => {
+    //   return { pos: item.pos, ...item.columnConfig }
+    // })
+
+    // const maxRows = newColumn.reduce((prev, now) => {
+    //   prev = now.pos.row > prev ? now.pos.row : prev
+    //   return prev
+    // }, 1)
+
+    // const rows = []
+
+    // for (let i = 1; i <= 3; i++) {
+    //   rows.push([])
+    // }
+
+    // newColumn.forEach((column) => {
+    //   if (!column.context.$children.length) {
+    //     column.rowSpan = maxRows - column.pos.row + 1
+    //     column.colSpan = 1
+    //   } else {
+    //     column.rowSpan = 1
+    //     column.colSpan = column.context.$children.length
+    //   }
+    //   rows[column.pos.row - 1].push(column)
+    // })
   },
 
   methods: {
@@ -633,9 +740,9 @@ var script$2 = {
       this.columns.push(config);
     },
     setColWidth: function setColWidth() {
-      var columnLength = this.columns.length;
+      var columnLength = this.realColumns.length;
       var tableWidth = this.$el.clientWidth;
-      var setedWidthCol = this.columns.filter(function (item) {
+      var setedWidthCol = this.realColumns.filter(function (item) {
         return item.width;
       });
       var setedWidthNum = setedWidthCol.length;
@@ -646,17 +753,17 @@ var script$2 = {
         return prev;
       }, 0);
       var avgWidth = (tableWidth - setedTotalWidth) / (columnLength - setedWidthNum);
-      this.columns.forEach(function (column) {
+      this.realColumns.forEach(function (column) {
         if (!column.width) {
           column.width = '' + Math.ceil(avgWidth);
         }
       });
     },
     allSelectionCallback: function allSelectionCallback() {
-      var _this2 = this;
+      var _this3 = this;
 
       var canCheckData = this.selectable ? this.tableData.filter(function (item, index) {
-        return !_this2.selectable(item, index);
+        return !_this3.selectable(item, index);
       }) : this.tableData;
       var allSelect = canCheckData.every(function (item) {
         return item.checked;
@@ -683,18 +790,18 @@ var script$2 = {
       return val;
     },
     sortCallback: function sortCallback(_ref2) {
-      var _this3 = this;
+      var _this4 = this;
 
       var prop = _ref2.prop,
           direaction = _ref2.direaction;
 
-      var index = this.columns.findIndex(function (item) {
+      var index = this.allColumns.findIndex(function (item) {
         return item.prop === prop;
       });
-      var oldDireaction = this.columns[index].sortDireaction;
+      var oldDireaction = this.allColumns[index].sortDireaction;
       var defaultSortFn = function defaultSortFn(a, b) {
-        var p1 = _this3.getObjectValue(a, prop);
-        var p2 = _this3.getObjectValue(b, prop);
+        var p1 = _this4.getObjectValue(a, prop);
+        var p2 = _this4.getObjectValue(b, prop);
         if (typeof p1 === 'string' && typeof p2 === 'string') {
           return nowDireaction === 'A' ? p1.localeCompare(p2) : p2.localeCompare(p1);
         }
@@ -711,7 +818,7 @@ var script$2 = {
       };
       var nowDireaction = void 0;
       function _reset() {
-        this.columns.forEach(function (item) {
+        this.allColumns.forEach(function (item) {
           if (item.prop !== prop) {
             item.sortDireaction = null;
           }
@@ -727,7 +834,29 @@ var script$2 = {
 
       this.tableData.sort(defaultSortFn);
       _reset.call(this);
-      this.columns[index].sortDireaction = nowDireaction;
+      this.allColumns[index].sortDireaction = nowDireaction;
+    },
+    getAllColumns: function getAllColumns() {
+      var _this5 = this;
+
+      var level = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+      var columns = arguments[1];
+
+      var result = [];
+      level++;
+      columns.forEach(function (column, index) {
+        column.pos = {
+          col: index + 1,
+          row: level
+        };
+        if (column.$children) {
+          result.push(column);
+          result.push.apply(result, _this5.getAllColumns(level, column.$children));
+        } else {
+          result.push(column);
+        }
+      });
+      return result;
     }
   }
 };
@@ -747,14 +876,14 @@ var __vue_render__ = function __vue_render__() {
     style: _vm.tableWrapper
   }, [_vm._t("default"), _vm._v(" "), _c("table-header", {
     attrs: {
-      columns: _vm.columns,
+      columns: _vm.realColumns,
       data: _vm.tableData,
       border: _vm.border
     },
     on: { allSelection: _vm.allSelectionCallback, sort: _vm.sortCallback }
   }), _vm._v(" "), _c("table-body", {
     attrs: {
-      columns: _vm.columns,
+      columns: _vm.realColumns,
       data: _vm.tableData,
       border: _vm.border,
       "row-class-name": _vm.rowClassName
