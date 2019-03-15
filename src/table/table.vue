@@ -18,6 +18,7 @@
       :border="border"
       :row-class-name="rowClassName"
       @check="checkCallback"
+      @expend="expendCallback"
     />
   </div>
 </template>
@@ -124,7 +125,7 @@ export default {
     data: {
       handler: function(v) {
         this.tableData = JSON.parse(JSON.stringify(v.map(item => {
-          return { ...item, checked: false }
+          return { ...item, checked: false, expend: false }
         })))
         this.$nextTick(() => {
           this.$emit('selectChange', this.selected)
@@ -175,6 +176,9 @@ export default {
       this.tableData[index].checked = !this.tableData[index].checked
       this.$emit('selectChange', this.selected)
     },
+    expendCallback({ trData, index }) {
+      this.tableData[index].expend = !trData.expend
+    },
     getObjectValue(obj, path) {
       const pathArr = path.split('.')
       let val = obj
@@ -224,6 +228,7 @@ export default {
       _reset.call(this)
       this.allColumns[index].sortDireaction = nowDireaction
     },
+    // 此函数引用自element-ui中table-column.js (本人写不好递归 😄)
     getAllColumns(level = 0, columns) {
       const result = []
       level++

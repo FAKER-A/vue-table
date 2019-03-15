@@ -25,6 +25,9 @@ export default {
     check(item, index) {
       this.$emit('check', { checked: item, index })
     },
+    expend(item, index) {
+      this.$emit('expend', { trData: item, index })
+    },
     tdClick(row, column, td, event) {
       this.$parent.$emit('tdClick', { row, column, td, event })
     },
@@ -36,6 +39,25 @@ export default {
     },
     trDblClick(row, event) {
       this.$parent.$emit('trDblClick', { row, event })
+    },
+    getExpendTdClass(column, trData, index) {
+      const classArr = this.getDefaultTd(column, trData, index).split(' ')
+      if (trData.expend) {
+        classArr.push('expended')
+      } else {
+        classArr.push('expend')
+      }
+      return classArr.join(' ')
+    },
+    getDefaultTdClass(column, trData, index) {
+      const classArr = []
+      if (column.align) {
+        classArr.push(`is-${column.align}`)
+      }
+      if (!this.border) {
+        classArr.push('no-border')
+      }
+      return classArr.join(' ')
     },
     getObjectValue(obj, path) {
       const pathArr = path.split('.')
@@ -49,7 +71,7 @@ export default {
     renderSelectionTd(column, trData, index) {
       return (
         <td
-          class={ this.border ? `is-${column.align}` : `no-border is-${column.align}` }
+          class={ this.getDefaultTdClass(column, trData, index) }
           onClick={ e => e.stopPropagation() }
           onDblclick={ e => e.stopPropagation() }>
           <div class='cell'>
@@ -66,10 +88,22 @@ export default {
         </td>
       )
     },
+    renderExpendTd(column, trData, index) {
+      return (
+        <td
+          class={ this.getDefaultTdClass(column, trData, index) }>
+          <div class='cell'>
+            <i
+              class={ trData.expend ? 'expend  expended' : 'expend' }
+              onClick={ this.expend.bind(this, trData, index) }></i>
+          </div>
+        </td>
+      )
+    },
     renderDefaultTd(column, trData, index) {
       return (
         <td
-          class={ this.border ? `is-${column.align}` : `no-border is-${column.align}` }
+          class={ this.getDefaultTdClass(column, trData, index) }
           onClick={(e) => { this.tdClick(trData, column, trData[column.prop], e) }}
           onDblclick={(e) => { this.tdDblClick(trData, column, trData[column.prop], e) }}>
           <div class='cell' style={ { width: column.width + 'px' } }>
@@ -81,11 +115,22 @@ export default {
     renderCustomizeTd(column, trData, index) {
       return (
         <td
-          class={ this.border ? `is-${column.align}` : `no-border is-${column.align}` }>
+          class={ this.getDefaultTdClass(column, trData, index) }>
           <div class='cell' style={ { width: column.width + 'px' } }>
             {column.render({ row: trData, index })}
           </div>
         </td>
+      )
+    },
+    renderExpendTr(column, trData, index) {
+      return (
+        <tr>
+          <td colSpan={ this.columns.length }>
+            <div class='cell'>
+              { column.render({ row: trData, index }) }
+            </div>
+          </td>
+        </tr>
       )
     },
     trClassname(index) {
@@ -94,6 +139,7 @@ export default {
   },
 
   render() {
+    const expendColumn = this.columns.filter(columns => columns.type === 'expend')
     return (
       <div class='qb-table-body-wrapper hover-highlight'>
         <table
@@ -109,7 +155,7 @@ export default {
           <tbody>
             {
               this.data.map((trData, index) => {
-                return (
+                return [
                   <tr
                     class={ this.rowClassName && typeof this.rowClassName === 'function' ? this.trClassname(index) + ' ' + this.rowClassName({ row: trData, rowIndex: index }) : this.trClassname(index) }
                     onClick={ (e) => { this.trClick(trData, e) } }
@@ -119,6 +165,8 @@ export default {
                         switch (column.type) {
                           case 'selection':
                             return this.renderSelectionTd(column, trData, index)
+                          case 'expend':
+                            return this.renderExpendTd(column, trData, index)
                           case '':
                             if (column.render) {
                               return this.renderCustomizeTd(column, trData, index)
@@ -127,10 +175,14 @@ export default {
                         }
                       })
                     }
-                  </tr>
-                )
+                  </tr>,
+
+                  expendColumn.length && trData.expend ? this.renderExpendTr(expendColumn[0], trData, index) : null
+
+                ]
               })
             }
+
           </tbody>
         </table>
       </div>

@@ -74,6 +74,20 @@ var script = {
           )]
         )]
       );
+    },
+    renderExpendTh: function renderExpendTh(column, index) {
+      var h = this.$createElement;
+
+      return h(
+        'th',
+        {
+          key: index + column.prop,
+          attrs: { rowSpan: column.rowSpan,
+            colSpan: column.colSpan
+          },
+          'class': this.border ? '' : 'no-border' },
+        [h('div', { 'class': 'cell' })]
+      );
     }
   },
   render: function render() {
@@ -102,6 +116,9 @@ var script = {
             switch (column.type) {
               case 'selection':
                 html = _this2.renderSelectionTh(column, index);
+                break;
+              case 'expend':
+                html = _this2.renderExpendTh(column, index);
                 break;
               case '':
                 html = h(
@@ -295,7 +312,7 @@ var __vue_script__ = script;
 /* style */
 var __vue_inject_styles__ = function __vue_inject_styles__(inject) {
   if (!inject) { return; }
-  inject("data-v-0b6847e0_0", { source: "\n/*# sourceMappingURL=tableHeader.vue.map */", map: { "version": 3, "sources": ["tableHeader.vue"], "names": [], "mappings": ";AACA,0CAA0C", "file": "tableHeader.vue" }, media: undefined });
+  inject("data-v-2a7188a6_0", { source: "\n/*# sourceMappingURL=tableHeader.vue.map */", map: { "version": 3, "sources": ["tableHeader.vue"], "names": [], "mappings": ";AACA,0CAA0C", "file": "tableHeader.vue" }, media: undefined });
 };
 /* scoped */
 var __vue_scope_id__ = undefined;
@@ -336,6 +353,9 @@ var script$1 = {
     check: function check(item, index) {
       this.$emit('check', { checked: item, index: index });
     },
+    expend: function expend(item, index) {
+      this.$emit('expend', { trData: item, index: index });
+    },
     tdClick: function tdClick(row, column, td, event) {
       this.$parent.$emit('tdClick', { row: row, column: column, td: td, event: event });
     },
@@ -347,6 +367,25 @@ var script$1 = {
     },
     trDblClick: function trDblClick(row, event) {
       this.$parent.$emit('trDblClick', { row: row, event: event });
+    },
+    getExpendTdClass: function getExpendTdClass(column, trData, index) {
+      var classArr = this.getDefaultTd(column, trData, index).split(' ');
+      if (trData.expend) {
+        classArr.push('expended');
+      } else {
+        classArr.push('expend');
+      }
+      return classArr.join(' ');
+    },
+    getDefaultTdClass: function getDefaultTdClass(column, trData, index) {
+      var classArr = [];
+      if (column.align) {
+        classArr.push('is-' + column.align);
+      }
+      if (!this.border) {
+        classArr.push('no-border');
+      }
+      return classArr.join(' ');
     },
     getObjectValue: function getObjectValue(obj, path) {
       var pathArr = path.split('.');
@@ -363,7 +402,7 @@ var script$1 = {
       return h(
         'td',
         {
-          'class': this.border ? 'is-' + column.align : 'no-border is-' + column.align,
+          'class': this.getDefaultTdClass(column, trData, index),
           on: {
             'click': function click(e) {
               return e.stopPropagation();
@@ -395,6 +434,25 @@ var script$1 = {
         )]
       );
     },
+    renderExpendTd: function renderExpendTd(column, trData, index) {
+      var h = this.$createElement;
+
+      return h(
+        'td',
+        {
+          'class': this.getDefaultTdClass(column, trData, index) },
+        [h(
+          'div',
+          { 'class': 'cell' },
+          [h('i', {
+            'class': trData.expend ? 'expend  expended' : 'expend',
+            on: {
+              'click': this.expend.bind(this, trData, index)
+            }
+          })]
+        )]
+      );
+    },
     renderDefaultTd: function renderDefaultTd(column, trData, index) {
       var _this = this;
 
@@ -403,7 +461,7 @@ var script$1 = {
       return h(
         'td',
         {
-          'class': this.border ? 'is-' + column.align : 'no-border is-' + column.align,
+          'class': this.getDefaultTdClass(column, trData, index),
           on: {
             'click': function click(e) {
               _this.tdClick(trData, column, trData[column.prop], e);
@@ -426,13 +484,28 @@ var script$1 = {
       return h(
         'td',
         {
-          'class': this.border ? 'is-' + column.align : 'no-border is-' + column.align },
+          'class': this.getDefaultTdClass(column, trData, index) },
         [h(
           'div',
           { 'class': 'cell', style: { width: column.width + 'px' } },
           [column.render({ row: trData, index: index })]
         )]
       );
+    },
+    renderExpendTr: function renderExpendTr(column, trData, index) {
+      var h = this.$createElement;
+
+      return h('tr', [h(
+        'td',
+        {
+          attrs: { colSpan: this.columns.length }
+        },
+        [h(
+          'div',
+          { 'class': 'cell' },
+          [column.render({ row: trData, index: index })]
+        )]
+      )]);
     },
     trClassname: function trClassname(index) {
       return index % 2 === 0 ? 'odd' : 'even';
@@ -444,6 +517,9 @@ var script$1 = {
 
     var h = arguments[0];
 
+    var expendColumn = this.columns.filter(function (columns) {
+      return columns.type === 'expend';
+    });
     return h(
       'div',
       { 'class': 'qb-table-body-wrapper hover-highlight' },
@@ -460,7 +536,7 @@ var script$1 = {
             attrs: { width: column.width }
           });
         })]), h('tbody', [this.data.map(function (trData, index) {
-          return h(
+          return [h(
             'tr',
             {
               'class': _this2.rowClassName && typeof _this2.rowClassName === 'function' ? _this2.trClassname(index) + ' ' + _this2.rowClassName({ row: trData, rowIndex: index }) : _this2.trClassname(index),
@@ -477,6 +553,8 @@ var script$1 = {
               switch (column.type) {
                 case 'selection':
                   return _this2.renderSelectionTd(column, trData, index);
+                case 'expend':
+                  return _this2.renderExpendTd(column, trData, index);
                 case '':
                   if (column.render) {
                     return _this2.renderCustomizeTd(column, trData, index);
@@ -484,7 +562,7 @@ var script$1 = {
                   return _this2.renderDefaultTd(column, trData, index);
               }
             })]
-          );
+          ), expendColumn.length && trData.expend ? _this2.renderExpendTr(expendColumn[0], trData, index) : null];
         })])]
       )]
     );
@@ -640,7 +718,7 @@ var script$2 = {
         var _this2 = this;
 
         this.tableData = JSON.parse(JSON.stringify(v.map(function (item) {
-          return _extends({}, item, { checked: false });
+          return _extends({}, item, { checked: false, expend: false });
         })));
         this.$nextTick(function () {
           _this2.$emit('selectChange', _this2.selected);
@@ -702,6 +780,12 @@ var script$2 = {
       this.tableData[index].checked = !this.tableData[index].checked;
       this.$emit('selectChange', this.selected);
     },
+    expendCallback: function expendCallback(_ref2) {
+      var trData = _ref2.trData,
+          index = _ref2.index;
+
+      this.tableData[index].expend = !trData.expend;
+    },
     getObjectValue: function getObjectValue(obj, path) {
       var pathArr = path.split('.');
       var val = obj;
@@ -711,11 +795,11 @@ var script$2 = {
       }
       return val;
     },
-    sortCallback: function sortCallback(_ref2) {
+    sortCallback: function sortCallback(_ref3) {
       var _this4 = this;
 
-      var prop = _ref2.prop,
-          direaction = _ref2.direaction;
+      var prop = _ref3.prop,
+          direaction = _ref3.direaction;
 
       var index = this.allColumns.findIndex(function (item) {
         return item.prop === prop;
@@ -758,6 +842,8 @@ var script$2 = {
       _reset.call(this);
       this.allColumns[index].sortDireaction = nowDireaction;
     },
+
+    // 此函数引用自element-ui中table-column.js (本人写不好递归 😄)
     getAllColumns: function getAllColumns() {
       var _this5 = this;
 
@@ -810,7 +896,7 @@ var __vue_render__ = function __vue_render__() {
       border: _vm.border,
       "row-class-name": _vm.rowClassName
     },
-    on: { check: _vm.checkCallback }
+    on: { check: _vm.checkCallback, expend: _vm.expendCallback }
   })], 2);
 };
 var __vue_staticRenderFns__ = [];
@@ -883,14 +969,14 @@ var script$3 = {
     var _this = this;
 
     this.$options.render = function (h) {
-      return h('div', _this.$slots.default);
+      return h('div', { style: { display: 'none' } }, _this.$slots.default);
     };
+  },
+  mounted: function mounted() {
     this.columnConfig = _extends({}, this.$props, {
       context: this,
       render: this.$scopedSlots.default
     });
-  },
-  mounted: function mounted() {
     this.$parent.$emit('insertColumn', this.columnConfig);
   }
 };

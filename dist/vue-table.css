@@ -64,6 +64,23 @@
     .arrow-group .arrow-down {
       border-top: 4px solid #717a9a; }
 
+.expend {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  -webkit-transform: rotate(135deg);
+          transform: rotate(135deg); }
+  .expend.expended {
+    -webkit-transform: rotate(180deg);
+            transform: rotate(180deg); }
+  .expend::after {
+    display: block;
+    content: "";
+    width: 14px;
+    height: 14px;
+    border-top: 1px solid #DCDFE6;
+    border-left: 1px solid #DCDFE6; }
+
 .table-wrapper {
   position: relative;
   box-sizing: border-box;

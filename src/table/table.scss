@@ -80,6 +80,25 @@
     }
   }
 }
+
+.expend{
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  transform: rotate(135deg);
+  &.expended{
+    transform:rotate(180deg);
+  }
+  &::after{
+    display: block;
+    content: "";
+    width: 14px;
+    height: 14px;
+    // background: transparent;
+    border-top: 1px solid #DCDFE6;
+    border-left: 1px solid #DCDFE6;
+  }
+}
 .table-wrapper{
   position: relative;
   box-sizing: border-box;

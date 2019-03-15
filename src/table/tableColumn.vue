@@ -49,14 +49,14 @@ export default {
     }
   },
   created() {
-    this.$options.render = h => h('div', this.$slots.default)
+    this.$options.render = h => h('div', { style: { display: 'none' }}, this.$slots.default)
+  },
+  mounted() {
     this.columnConfig = {
       ...this.$props,
       context: this,
       render: this.$scopedSlots.default
     }
-  },
-  mounted() {
     this.$parent.$emit('insertColumn', this.columnConfig)
   }
 

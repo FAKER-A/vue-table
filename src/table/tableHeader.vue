@@ -53,6 +53,18 @@ export default {
           </div>
         </th>
       )
+    },
+    renderExpendTh(column, index) {
+      return (
+        <th
+          key={ index + column.prop }
+          rowSpan={ column.rowSpan }
+          colSpan={ column.colSpan }
+          class={ this.border ? '' : 'no-border' }>
+          <div class='cell'>
+          </div>
+        </th>
+      )
     }
   },
   render() {
@@ -76,6 +88,9 @@ export default {
                     switch (column.type) {
                       case 'selection':
                         html = this.renderSelectionTh(column, index)
+                        break
+                      case 'expend':
+                        html = this.renderExpendTh(column, index)
                         break
                       case '':
                         html = <th
