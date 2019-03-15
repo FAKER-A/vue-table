@@ -5,10 +5,15 @@
       border
     >
       <v-table-column
-        type="selection"
+        type="expend"
         width="38"
-        sort
-      />
+      >
+        <template slot-scope="{ row }">
+          <div>name: {{ row.name }}</div>
+          <div>age: {{ row.age }}</div>
+          <div>work: {{ row.work }}</div>
+        </template>
+      </v-table-column>
       <v-table-column
         prop="name"
         label="姓名"
