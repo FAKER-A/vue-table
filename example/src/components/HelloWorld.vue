@@ -56,6 +56,32 @@
         sort
       />
     </v-table>
+    <hr>
+    <div style="width:800px">
+      <v-table
+        :data="tablelist"
+        border
+        height="200px"
+      >
+        <v-table-column
+          prop="name"
+          label="姓名"
+          width="300"
+        />
+        <v-table-column
+          prop="age"
+          label="年龄"
+        />
+        <v-table-column
+          prop="sex"
+          label="男"
+        />
+        <v-table-column
+          prop="name"
+          label="姓名"
+        />
+      </v-table>
+    </div>
   </div>
 </template>
 
@@ -66,6 +92,10 @@ export default {
     return {
       tablelist: [
         { name: 'lisheng', age: 25, sex: '男', work: '前端工程师' },
+        { name: 'wangchen', age: 30, sex: '女', work: '后端工程师' },
+        { name: 'wangchen', age: 30, sex: '女', work: '后端工程师' },
+        { name: 'wangchen', age: 30, sex: '女', work: '后端工程师' },
+        { name: 'wangchen', age: 30, sex: '女', work: '后端工程师' },
         { name: 'wangchen', age: 30, sex: '女', work: '后端工程师' },
         { name: 'wangchen', age: 30, sex: '女', work: '后端工程师' }
       ]

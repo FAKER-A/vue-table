@@ -113,10 +113,28 @@
     border: none;
     border-bottom: none;
   }
+  &-fixed::after{
+    content: "";
+    width:1px;
+    height:100%;
+    background: #ebeef5;
+    position: absolute;
+    right:0;
+    top:0;
+  }
+  &-fixed::before{
+    content: "";
+    width:100%;
+    height:1px;
+    background: #ebeef5;
+    position: absolute;
+    right:0;
+    bottom:0;
+  }
+
 }
 .qb-table-header-wrapper{
   table {
-    width: 100%;
     table-layout: fixed;
     border-collapse: separate;
     th {
@@ -148,7 +166,6 @@
 }
 .qb-table-body-wrapper {
   table {
-    width: 100%;
     table-layout: fixed;
     border-collapse: separate;
     td{
@@ -183,6 +200,10 @@
       background-color: #f5f7fa;
       transition: background-color 0.3s ease-out;
     }
+  }
+  &.table-body-wrapper-fixed {
+    overflow-y: auto;
+    overflow-x: hidden
   }
 }
 

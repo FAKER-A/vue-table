@@ -12,6 +12,15 @@ export default {
     border: {
       type: Boolean,
       default: false
+    },
+    width: {
+      type: Number,
+      default: 0
+    }
+  },
+  data() {
+    return {
+      deep: 0
     }
   },
   computed: {
@@ -21,10 +30,6 @@ export default {
         if (!canCheckData.length) return false
         return canCheckData.every(item => !!item.checked)
       }
-    },
-    maxDeep() {
-      const deep = 0
-      return deep
     }
   },
   methods: {
@@ -68,15 +73,17 @@ export default {
     }
   },
   render() {
+    console.log('xx', this.columns)
     return (
       <div class='qb-table-header-wrapper'>
         <table
           cellspacing='0'
           cellpadding='0'
-          border='0'>
+          border='0'
+          style={ { width: this.width + 'px' } }>
           <colgroup>
             { this.columns.map((column) => {
-              return <col width={column.width}/>
+              return <col width={column.width ? column.width : column.avgWidth}/>
             }) }
           </colgroup>
           <thead>

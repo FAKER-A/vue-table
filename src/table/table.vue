@@ -1,21 +1,27 @@
 <template>
   <div
-    :class="{ 'no-border': !border, [theme]:theme }"
+    :ref="tableWrapperRef"
+    :class="{ 'no-border': !border, [theme]:theme,'table-wrapper-fixed': scrollY }"
     :style="tableWrapper"
     class="table-wrapper"
   >
     <slot />
     <table-header
+      :ref="tableHeaderRef"
       :columns="realColumns"
       :data="tableData"
       :border="border"
+      :width="tableHeaderWidth"
       @allSelection="allSelectionCallback"
       @sort="sortCallback"
     />
     <table-body
+      :ref="tableBodyRef"
       :columns="realColumns"
       :data="tableData"
       :border="border"
+      :height="bodyHeight"
+      :width="tableHeaderWidth"
       :row-class-name="rowClassName"
       @check="checkCallback"
       @expend="expendCallback"
@@ -45,8 +51,8 @@ export default {
       default: 'black'
     },
     height: {
-      type: String,
-      default: '500px'
+      type: [String, null],
+      default: null
     },
     border: {
       type: Boolean,
@@ -62,17 +68,66 @@ export default {
     }
   },
   data() {
+    const getScrollbarWidth = () => {
+      const outer = document.createElement('div')
+      outer.style = {
+        position: 'absolute',
+        left: '-10000000px',
+        width: '100px',
+        visibility: 'hidden'
+      }
+      document.body.appendChild(outer)
+      const outerWidth = outer.offsetWidth
+      outer.style.overflow = 'scroll'
+      const inner = document.createElement('div')
+      inner.style = {
+        width: '100%'
+      }
+      outer.appendChild(inner)
+      const innerWidth = inner.offsetWidth
+      const scrollbarWidth = outerWidth - innerWidth
+      outer.parentNode.removeChild(outer)
+      return scrollbarWidth
+    }
     return {
       columns: [],
       colID: 0,
-      tableData: []
+      tableData: [],
+      headerHeight: null,
+      bodyHeight: null,
+      maxLevel: 0,
+      tableID: Math.random() * Math.random(),
+      scrollBarWidth: getScrollbarWidth(),
+      scrollY: false,
+      realColumns: [],
+      tableWrapperWidth: null
     }
   },
   computed: {
+    tableHeaderRef() {
+      return `table_header_${this.tableID}`
+    },
+    tableBodyRef() {
+      return `table_body_${this.tableID}`
+    },
+    tableWrapperRef() {
+      return `table_wrapper_${this.tableID}`
+    },
     tableWrapper() {
       return {
         width: this.width
       }
+    },
+    tableHeaderWidth() {
+      return this.realColumns.reduce((prev, next) => {
+        if (next.width) prev += parseInt(next.width)
+        if (next.avgWidth) prev += parseInt(next.avgWidth)
+        return prev
+      }, 0)
+      // let width = null
+      // if (!this.scrollY) width = this.tableWrapperWidth
+      // width = this.tableWrapperWidth - this.scrollBarWidth
+      // return width
     },
     selected() {
       const selectedData = JSON.parse(JSON.stringify(this.tableData.filter(item => item.checked)))
@@ -95,7 +150,7 @@ export default {
     },
     headerRows() {
       const rows = []
-
+      // TODO: MAXLEVEL
       for (let i = 1; i <= 3; i++) {
         rows.push([])
       }
@@ -111,14 +166,12 @@ export default {
         rows[column.pos.row - 1].push(column)
       })
       return rows
-    },
-    realColumns() {
-      return this.allColumns.filter(item => !item.context.$children.length)
     }
   },
   watch: {
-    realColumns(v) {
-      if (v.length === this.$slots.default.filter(item => !!item.tag).length) {
+    allColumns: {
+      handler: function(v) {
+        this.realColumns = v.filter(item => !item.context.$children.length)
         this.setColWidth()
       }
     },
@@ -132,12 +185,21 @@ export default {
         })
       },
       immediate: true
+    },
+    height: {
+      handler: function(v) {
+        if (v) {
+          this.calcHeight()
+        }
+      },
+      immediate: true
     }
   },
   created() {
     this.$on('insertColumn', this.insertColumn)
   },
   mounted() {
+    // this.calcTableWrapper()
   },
   methods: {
     insertColumn(config) {
@@ -146,9 +208,12 @@ export default {
       this.colID++
       this.columns.push(config)
     },
+    getRealColumn() {
+      this.realColumns = this.allColumns.filter(item => !item.context.$children.length)
+    },
     setColWidth() {
       const columnLength = this.realColumns.length
-      const tableWidth = this.$el.clientWidth
+      const tableWidth = this.scrollY ? this.$el.clientWidth - this.scrollBarWidth : this.$el.clientWidth
       const setedWidthCol = this.realColumns.filter(item => item.width)
       const setedWidthNum = setedWidthCol.length
       const setedTotalWidth = setedWidthCol.reduce((prev, curr) => {
@@ -160,9 +225,10 @@ export default {
       const avgWidth = (tableWidth - setedTotalWidth) / (columnLength - setedWidthNum)
       this.realColumns.forEach(column => {
         if (!column.width) {
-          column.width = `${Math.ceil(avgWidth)}`
+          column.avgWidth = `${Math.ceil(avgWidth)}`
         }
       })
+      this.realColumns = this.realColumns.slice(0)
     },
     allSelectionCallback() {
       const canCheckData = this.selectable ? this.tableData.filter((item, index) => !this.selectable(item, index)) : this.tableData
@@ -245,7 +311,23 @@ export default {
         }
       })
       return result
+    },
+    calcHeight() {
+      if (!this.$refs[this.tableHeaderRef]) return this.$nextTick(() => { this.calcHeight() })
+      if (!this.$refs[this.tableHeaderRef].$el.clientHeight) return this.$nextTick(() => { this.calcHeight() })
+      this.headerHeight = this.$refs[this.tableHeaderRef].$el.clientHeight
+      this.bodyHeight = parseInt(this.height) - this.headerHeight
+      this.$nextTick(() => {
+        const body = this.$refs[this.tableBodyRef].$el
+        this.scrollY = body.scrollHeight > body.clientHeight
+        this.setColWidth()
+      })
     }
+    // calcTableWrapper() {
+    //   if (!this.$refs[this.tableWrapperRef]) return this.$nextTick(() => { this.calcTableWrapper })
+    //   if (!this.$refs[this.tableWrapperRef].offsetWidth) return this.$nextTick(() => { this.calcTableWrapper })
+    //   this.tableWrapperWidth = this.$refs[this.tableWrapperRef].offsetWidth
+    // }
   }
 }
 </script>

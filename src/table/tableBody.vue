@@ -17,6 +17,14 @@ export default {
     rowClassName: {
       type: Function,
       default: null
+    },
+    height: {
+      type: [Number, null],
+      default: null
+    },
+    width: {
+      type: Number,
+      default: 0
     }
   },
   watch: {
@@ -56,6 +64,13 @@ export default {
       }
       if (!this.border) {
         classArr.push('no-border')
+      }
+      return classArr.join(' ')
+    },
+    getTableWrapperClass() {
+      const classArr = ['qb-table-body-wrapper', 'hover-highlight']
+      if (this.height) {
+        classArr.push('table-body-wrapper-fixed')
       }
       return classArr.join(' ')
     },
@@ -106,7 +121,7 @@ export default {
           class={ this.getDefaultTdClass(column, trData, index) }
           onClick={(e) => { this.tdClick(trData, column, trData[column.prop], e) }}
           onDblclick={(e) => { this.tdDblClick(trData, column, trData[column.prop], e) }}>
-          <div class='cell' style={ { width: column.width + 'px' } }>
+          <div class='cell' style={ { width: (column.width ? column.width : column.avgWidth) + 'px' } }>
             { column.formatter && typeof column.formatter === 'function' ? column.formatter(this.getObjectValue(trData, column.prop)) : this.getObjectValue(trData, column.prop)}
           </div>
         </td>
@@ -116,7 +131,7 @@ export default {
       return (
         <td
           class={ this.getDefaultTdClass(column, trData, index) }>
-          <div class='cell' style={ { width: column.width + 'px' } }>
+          <div class='cell' style={ { width: (column.width ? column.width : column.avgWidth) + 'px' } }>
             {column.render({ row: trData, index })}
           </div>
         </td>
@@ -141,14 +156,15 @@ export default {
   render() {
     const expendColumn = this.columns.filter(columns => columns.type === 'expend')
     return (
-      <div class='qb-table-body-wrapper hover-highlight'>
+      <div class={ this.getTableWrapperClass() } style={ { height: this.height ? `${this.height}px` : null } }>
         <table
           cellspacing='0'
           cellpadding='0'
-          border='0'>
+          border='0'
+          style={ { width: this.width + 'px' } }>
           <colgroup>
             { this.columns.map((column) => {
-              return <col width={column.width}/>
+              return <col width={column.width ? column.width : column.avgWidth}/>
             })
             }
           </colgroup>
