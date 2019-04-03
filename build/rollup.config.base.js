@@ -9,6 +9,7 @@ import autoprefixer from 'autoprefixer'
 export default {
   input: 'src/index.js',
   plugins: [
+    eslint(),
     postcss({
       extract: 'dist/vue-table.css',
       plugins: [autoprefixer()]
@@ -29,8 +30,7 @@ export default {
       main: true,
       browser: true
     }),
-    cjs(),
-    eslint()
+    cjs()
   ],
   watch: {
     include: 'src/**'

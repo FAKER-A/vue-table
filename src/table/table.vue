@@ -124,10 +124,6 @@ export default {
         if (next.avgWidth) prev += parseInt(next.avgWidth)
         return prev
       }, 0)
-      // let width = null
-      // if (!this.scrollY) width = this.tableWrapperWidth
-      // width = this.tableWrapperWidth - this.scrollBarWidth
-      // return width
     },
     selected() {
       const selectedData = JSON.parse(JSON.stringify(this.tableData.filter(item => item.checked)))
@@ -199,7 +195,6 @@ export default {
     this.$on('insertColumn', this.insertColumn)
   },
   mounted() {
-    // this.calcTableWrapper()
   },
   methods: {
     insertColumn(config) {
@@ -323,11 +318,6 @@ export default {
         this.setColWidth()
       })
     }
-    // calcTableWrapper() {
-    //   if (!this.$refs[this.tableWrapperRef]) return this.$nextTick(() => { this.calcTableWrapper })
-    //   if (!this.$refs[this.tableWrapperRef].offsetWidth) return this.$nextTick(() => { this.calcTableWrapper })
-    //   this.tableWrapperWidth = this.$refs[this.tableWrapperRef].offsetWidth
-    // }
   }
 }
 </script>

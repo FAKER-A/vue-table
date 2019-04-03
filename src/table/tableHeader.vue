@@ -26,7 +26,9 @@ export default {
   computed: {
     allSelection: {
       get() {
-        const canCheckData = this.$parent.selectable ? this.data.filter((item, index) => !this.$parent.selectable(item, index)) : this.data
+        const canCheckData = this.$parent.selectable
+          ? this.data.filter((item, index) => !this.$parent.selectable(item, index))
+          : this.data
         if (!canCheckData.length) return false
         return canCheckData.every(item => !!item.checked)
       }

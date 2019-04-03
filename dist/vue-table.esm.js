@@ -320,7 +320,7 @@ var __vue_script__ = script;
 /* style */
 var __vue_inject_styles__ = function __vue_inject_styles__(inject) {
   if (!inject) { return; }
-  inject("data-v-6c6b1882_0", { source: "\n/*# sourceMappingURL=tableHeader.vue.map */", map: { "version": 3, "sources": ["tableHeader.vue"], "names": [], "mappings": ";AACA,0CAA0C", "file": "tableHeader.vue" }, media: undefined });
+  inject("data-v-68fdcd42_0", { source: "\n/*# sourceMappingURL=tableHeader.vue.map */", map: { "version": 3, "sources": ["tableHeader.vue"], "names": [], "mappings": ";AACA,0CAA0C", "file": "tableHeader.vue" }, media: undefined });
 };
 /* scoped */
 var __vue_scope_id__ = undefined;
@@ -722,10 +722,6 @@ var script$2 = {
         if (next.avgWidth) { prev += parseInt(next.avgWidth); }
         return prev;
       }, 0);
-      // let width = null
-      // if (!this.scrollY) width = this.tableWrapperWidth
-      // width = this.tableWrapperWidth - this.scrollBarWidth
-      // return width
     },
     selected: function selected() {
       var selectedData = JSON.parse(JSON.stringify(this.tableData.filter(function (item) {
@@ -806,9 +802,7 @@ var script$2 = {
   created: function created() {
     this.$on('insertColumn', this.insertColumn);
   },
-  mounted: function mounted() {
-    // this.calcTableWrapper()
-  },
+  mounted: function mounted() {},
 
   methods: {
     insertColumn: function insertColumn(config) {
@@ -967,12 +961,6 @@ var script$2 = {
         _this6.setColWidth();
       });
     }
-    // calcTableWrapper() {
-    //   if (!this.$refs[this.tableWrapperRef]) return this.$nextTick(() => { this.calcTableWrapper })
-    //   if (!this.$refs[this.tableWrapperRef].offsetWidth) return this.$nextTick(() => { this.calcTableWrapper })
-    //   this.tableWrapperWidth = this.$refs[this.tableWrapperRef].offsetWidth
-    // }
-
   }
 };
 
